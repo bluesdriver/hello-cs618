@@ -1,0 +1,4 @@
+{
+  "schema": "https://scaling-memory-vjqvgwq96g435v9-3000.app.github.dev/graphql",
+  "documents": "src/api/graphql/**/*.{js,jsx}"
+}
