@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { getUserInfoById } from './services/users.js'
+import { createMessage, getMessagesByRoom } from './services/messages.js'
 
 export function handleSocket(io) {
   io.use((socket, next) => {
@@ -20,11 +21,17 @@ export function handleSocket(io) {
     )
   })
 
-  io.on('connection', (socket) => {
+  io.on('connection', async (socket) => {
     console.log('user connected:', socket.id)
     const room = socket.handshake.query?.room ?? 'public'
     socket.join(room)
     console.log(socket.id, 'joined room:', room)
+
+    const messages = await getMessagesByRoom(room)
+    messages.forEach(({ username, message }) =>
+      socket.emit('chat.message', { username, message, replayed: true }),
+    )
+
     socket.on('disconnect', () => {
       console.log('user disconnected:', socket.id)
     })
@@ -34,6 +41,7 @@ export function handleSocket(io) {
         username: socket.user.username,
         message,
       })
+      createMessage({ username: socket.user.username, message, room })
     })
     socket.on('user.info', async (socketId, callback) => {
       const sockets = await io.in(socketId).fetchSockets()
