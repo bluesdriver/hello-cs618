@@ -19,7 +19,7 @@ export function Header() {
   if (token && userInfo) {
     return (
       <div>
-        <h1>Welcome to my blog!</h1>
+        <h1>Find a good recipe!</h1>
         Logged in as <User {...userInfo} />
         <br />
         <button onClick={() => setToken(null)}>Logout</button>
@@ -29,7 +29,7 @@ export function Header() {
 
   return (
     <div>
-      <h1>Welcome to my blog!</h1>
+      <h1>Find a good recipe!</h1>
       <Link to='/login'>Log In</Link> | <Link to='/signup'>Sign Up</Link>
     </div>
   )

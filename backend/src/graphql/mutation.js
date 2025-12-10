@@ -5,7 +5,7 @@ export const mutationSchema = `#graphql
     type Mutation {
         signupUser(username: String!, password: String!): User
         loginUser(username: String!, password: String!): String
-        createPost(title: String!, contents: String, tags: [String]): Post
+        createPost(title: String!, contents: String, imageURL: String, tags: [String]): Post
     }
 `
 export const mutationResolver = {
