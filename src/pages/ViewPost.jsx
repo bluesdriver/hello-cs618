@@ -10,10 +10,12 @@ import { getUserInfo } from '../api/users.js'
 import { PostStats } from '../components/PostStats.jsx'
 
 import { Helmet } from 'react-helmet-async'
+import { likePost } from '../../backend/src/services/posts.js'
+import { useAuth } from '../contexts/AuthContext.jsx'
 
 export function ViewPost({ postId }) {
   const [session, setSession] = useState()
-
+  const [token] = useAuth()
   const trackEventMutation = useMutation({
     mutationFn: (action) => postTrackEvent({ postId, action, session }),
     onSuccess: (data) => setSession(data?.session),
@@ -74,6 +76,18 @@ export function ViewPost({ postId }) {
       <Link to='/'>Back to main page</Link>
       <br />
       <hr />
+      <button
+        onClick={function handleClick() {
+          if (!token) alert('Please log in to like recipes.')
+          else {
+            likePost(post?.author, postId)
+            alert('Liked!')
+          }
+        }}
+      >
+        Like this recipe
+      </button>
+      <br />
       {post ? (
         <div>
           <Post {...post} author={userInfo} fullPost id={postId} />

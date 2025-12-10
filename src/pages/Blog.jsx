@@ -40,7 +40,7 @@ export function Blog() {
       />
       <br />
       <PostSorting
-        fields={['createdAt', 'updatedAt']}
+        fields={['createdAt', 'updatedAt', 'likes']}
         value={sortBy}
         onChange={(value) => setSortBy(value)}
         orderValue={sortOrder}

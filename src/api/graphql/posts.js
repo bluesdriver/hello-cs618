@@ -7,6 +7,7 @@ export const POST_FIELDS = gql`
     contents
     imageURL
     tags
+    likes
     updatedAt
     createdAt
     author {
