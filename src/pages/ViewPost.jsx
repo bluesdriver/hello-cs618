@@ -1,56 +1,56 @@
-import { Link } from 'react-router-dom'
-import PropTypes from 'prop-types'
-import { useQuery, useMutation } from '@tanstack/react-query'
-import { Header } from '../components/Header.jsx'
-import { Post } from '../components/Post.jsx'
-import { getPostById } from '../api/posts.js'
-import { useEffect, useState } from 'react'
-import { postTrackEvent } from '../api/events.js'
-import { getUserInfo } from '../api/users.js'
-import { PostStats } from '../components/PostStats.jsx'
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { Header } from '../components/Header.jsx';
+import { Post } from '../components/Post.jsx';
+import { getPostById } from '../api/posts.js';
+import { useEffect, useState } from 'react';
+import { postTrackEvent } from '../api/events.js';
+import { getUserInfo } from '../api/users.js';
+import { PostStats } from '../components/PostStats.jsx';
 
-import { Helmet } from 'react-helmet-async'
-import { likePost } from '../../backend/src/services/posts.js'
-import { useAuth } from '../contexts/AuthContext.jsx'
+import { Helmet } from 'react-helmet-async';
+import { updatePost } from '../../backend/src/services/posts.js';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
 export function ViewPost({ postId }) {
-  const [session, setSession] = useState()
-  const [token] = useAuth()
+  const [session, setSession] = useState();
+  const [token] = useAuth();
   const trackEventMutation = useMutation({
     mutationFn: (action) => postTrackEvent({ postId, action, session }),
     onSuccess: (data) => setSession(data?.session),
-  })
+  });
 
   useEffect(() => {
     let timeout = setTimeout(() => {
-      trackEventMutation.mutate('startView')
-      timeout = null
-    }, 1000)
+      trackEventMutation.mutate('startView');
+      timeout = null;
+    }, 1000);
     return () => {
-      if (timeout) clearTimeout(timeout)
-      else trackEventMutation.mutate('endView')
-    }
-  }, [])
+      if (timeout) clearTimeout(timeout);
+      else trackEventMutation.mutate('endView');
+    };
+  }, []);
 
   const postQuery = useQuery({
     queryKey: ['post', postId],
     queryFn: () => getPostById(postId),
-  })
-  const post = postQuery.data
+  });
+  const post = postQuery.data;
 
   const userInfoQuery = useQuery({
     queryKey: ['users', post?.author],
     queryFn: () => getUserInfo(post?.author),
     enabled: Boolean(post?.author),
-  })
-  const userInfo = userInfoQuery.data ?? {}
+  });
+  const userInfo = userInfoQuery.data ?? {};
 
   function truncate(str, max = 160) {
-    if (!str) return str
+    if (!str) return str;
     if (str.length > max) {
-      return str.slice(0, max - 3) + '...'
+      return str.slice(0, max - 3) + '...';
     } else {
-      return str
+      return str;
     }
   }
 
@@ -77,11 +77,14 @@ export function ViewPost({ postId }) {
       <br />
       <hr />
       <button
-        onClick={function handleClick() {
-          if (!token) alert('Please log in to like recipes.')
+        onClick={async () => {
+          if (!token) alert('Please log in to like recipes.');
           else {
-            likePost(post?.author, postId)
-            alert('Liked!')
+            var updatedLikes = post?.likes + 1;
+            await updatePost(post?.author, postId, {
+              likes: updatedLikes,
+            });
+            alert('Liked!');
           }
         }}
       >
@@ -98,9 +101,9 @@ export function ViewPost({ postId }) {
         `Post with id ${postId} not found.`
       )}
     </div>
-  )
+  );
 }
 
 ViewPost.propTypes = {
   postId: PropTypes.string.isRequired,
-}
+};

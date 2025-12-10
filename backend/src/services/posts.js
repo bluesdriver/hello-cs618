@@ -1,5 +1,5 @@
-import { Post } from '../db/models/post.js'
-import { User } from '../db/models/user.js'
+import { Post } from '../db/models/post.js';
+import { User } from '../db/models/user.js';
 
 export async function createPost(userId, { title, contents, imageURL, tags }) {
   const post = new Post({
@@ -9,33 +9,33 @@ export async function createPost(userId, { title, contents, imageURL, tags }) {
     imageURL,
     tags,
     likes: 0,
-  })
-  return await post.save()
+  });
+  return await post.save();
 }
 
 async function listPosts(
   query = {},
   { sortBy = 'createdAt', sortOrder = 'descending' } = {},
 ) {
-  return await Post.find(query).sort({ [sortBy]: sortOrder })
+  return await Post.find(query).sort({ [sortBy]: sortOrder });
 }
 
 export async function listAllPosts(options) {
-  return await listPosts({}, options)
+  return await listPosts({}, options);
 }
 
 export async function listPostsByAuthor(authorUsername, options) {
-  const user = await User.findOne({ username: authorUsername })
-  if (!user) return []
-  return await listPosts({ author: user._id }, options)
+  const user = await User.findOne({ username: authorUsername });
+  if (!user) return [];
+  return await listPosts({ author: user._id }, options);
 }
 
 export async function listPostsByTag(tags, options) {
-  return await listPosts({ tags }, options)
+  return await listPosts({ tags }, options);
 }
 
 export async function getPostById(postId) {
-  return await Post.findById(postId)
+  return await Post.findById(postId);
 }
 
 export async function updatePost(
@@ -47,7 +47,7 @@ export async function updatePost(
     { _id: postId, author: userId },
     { $set: { title, contents, imageURL, tags, likes } },
     { new: true },
-  )
+  );
 }
 
 export async function likePost(userId, postId, likes) {
@@ -55,9 +55,9 @@ export async function likePost(userId, postId, likes) {
     { _id: postId, author: userId },
     { likes: likes + 1 },
     { new: true },
-  )
+  );
 }
 
 export async function deletePost(userId, postId) {
-  return await Post.deleteOne({ _id: postId, author: userId })
+  return await Post.deleteOne({ _id: postId, author: userId });
 }
