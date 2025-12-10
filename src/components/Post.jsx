@@ -4,7 +4,14 @@ import { Link } from 'react-router-dom'
 
 import slug from 'slug'
 
-export function Post({ title, contents, author, id, fullPost = false }) {
+export function Post({
+  title,
+  contents,
+  author,
+  imageURL,
+  id,
+  fullPost = false,
+}) {
   return (
     <article>
       {fullPost ? (
@@ -15,10 +22,11 @@ export function Post({ title, contents, author, id, fullPost = false }) {
         </Link>
       )}
       {fullPost && <div>{contents}</div>}
+      <img src={imageURL} alt='Click here' width='300' height='300' />
       {author && (
         <em>
           {fullPost && <br />}
-          Written by <User {...author} />
+          Posted by <User {...author} />
         </em>
       )}
     </article>
@@ -27,6 +35,7 @@ export function Post({ title, contents, author, id, fullPost = false }) {
 Post.propTypes = {
   title: PropTypes.string.isRequired,
   contents: PropTypes.string,
+  imageURL: PropTypes.string,
   author: PropTypes.shape(User.propTypes),
   id: PropTypes.string.isRequired,
   fullPost: PropTypes.bool,

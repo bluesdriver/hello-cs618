@@ -5,6 +5,7 @@ export const postSchema = `#graphql
                     title: String!
                     author: User
                     contents: String
+                    imageURL: String
                     tags: [String!]
                     createdAt: Float
                     updatedAt: Float

@@ -17,8 +17,10 @@ export function CreatePost() {
 
   const [contents, setContents] = useState('')
 
+  const [imageURL, setImageURL] = useState('')
+
   const [createPost, { loading, data }] = useGraphQLMutation(CREATE_POST, {
-    variables: { title, contents },
+    variables: { title, contents, imageURL },
     context: { headers: { Authorization: `Bearer ${token}` } },
     refetchQueries: [GET_POSTS, GET_POSTS_BY_AUTHOR],
   })
@@ -43,11 +45,24 @@ export function CreatePost() {
         />
       </div>
       <br />
+      <label htmlFor='create-contents'>Ingredients: </label>
+      <br />
       <textarea
         value={contents}
         onChange={(e) => setContents(e.target.value)}
       />
       <br />
+      <div>
+        <label htmlFor='create-imageURL'>Image URL: </label>
+        <br />
+        <input
+          type='text'
+          name='create-imageURL'
+          id='create-imageURL'
+          value={imageURL}
+          onChange={(e) => setImageURL(e.target.value)}
+        />
+      </div>
       <br />
       <input
         type='submit'
