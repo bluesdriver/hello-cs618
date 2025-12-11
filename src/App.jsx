@@ -2,26 +2,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthContextProvider } from './contexts/AuthContext.jsx';
 import { ApolloProvider } from '@apollo/client/react/index.js';
 import { ApolloClient, InMemoryCache } from '@apollo/client/core/index.js';
-import { io } from 'socket.io-client';
 
 import PropTypes from 'prop-types';
-
-const socket = io(import.meta.env.VITE_SOCKET_HOST, {
-  query: window.location.search.substring(1),
-});
-
-socket.on('connect', async () => {
-  console.log('connected to socket.io as', socket.id);
-  socket.emit('chat.message', 'hello from client');
-  const userInfo = await socket.emitWithAck('user.info', socket.id);
-  console.log('user info', userInfo);
-});
-socket.on('connect_error', (err) => {
-  console.error('socket.io connect error:', err);
-});
-socket.on('chat.message', (msg) => {
-  console.log(`${msg.username}: ${msg.message}`);
-});
+import { SocketIOContextProvider } from './contexts/SocketIOContext.jsx';
 
 const queryClient = new QueryClient();
 
@@ -37,7 +20,9 @@ export function App({ children }) {
     <HelmetProvider>
       <ApolloProvider client={apolloClient}>
         <QueryClientProvider client={queryClient}>
-          <AuthContextProvider>{children}</AuthContextProvider>
+          <AuthContextProvider>
+            <SocketIOContextProvider>{children}</SocketIOContextProvider>
+          </AuthContextProvider>
         </QueryClientProvider>
       </ApolloProvider>
     </HelmetProvider>
