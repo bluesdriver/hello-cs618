@@ -49,3 +49,4 @@ const io = new Server(server, {
 });
 handleSocket(io);
 export { server as app };
+export { io };

@@ -1,7 +1,6 @@
 import { Post } from '../db/models/post.js';
 import { User } from '../db/models/user.js';
-
-import { useChat } from '../../../src/hooks/useChat.js';
+//import { useChat } from '../../../src/hooks/useChat.js';
 
 export async function createPost(userId, { title, contents, imageURL, tags }) {
   const post = new Post({
@@ -12,14 +11,6 @@ export async function createPost(userId, { title, contents, imageURL, tags }) {
     tags,
     likes: 0,
   });
-  const { messages, sendMessage } = useChat();
-  const creationMessage = "Hey there's a new post!!";
-  //<Link to={`/posts/${data.createPost.id}/${slug(data.createPost.title)}`}>
-  //          {data.createPost.title}
-  //     </Link>{' '}
-  //   created successfully!
-  messages;
-  sendMessage(creationMessage);
   return await post.save();
 }
 

@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client/core/index.js'
+import { gql } from '@apollo/client/core/index.js';
 
 export const POST_FIELDS = gql`
   fragment PostFields on Post {
@@ -14,7 +14,7 @@ export const POST_FIELDS = gql`
       username
     }
   }
-`
+`;
 
 export const GET_POSTS = gql`
   ${POST_FIELDS}
@@ -23,7 +23,7 @@ export const GET_POSTS = gql`
       ...PostFields
     }
   }
-`
+`;
 
 export const GET_POSTS_BY_AUTHOR = gql`
   ${POST_FIELDS}
@@ -32,7 +32,7 @@ export const GET_POSTS_BY_AUTHOR = gql`
       ...PostFields
     }
   }
-`
+`;
 
 export const CREATE_POST = gql`
   mutation createPost(
@@ -51,4 +51,4 @@ export const CREATE_POST = gql`
       title
     }
   }
-`
+`;
