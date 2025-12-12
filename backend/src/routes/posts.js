@@ -6,11 +6,12 @@ import {
   deletePost,
   updatePost,
   createPost,
+  likePost,
 } from '../services/posts.js';
 
 import { requireAuth } from '../middleware/jwt.js';
 
-export function postsRoutes(app, io) {
+export function postsRoutes(app) {
   app.get('/api/v1/posts', async (req, res) => {
     const { sortBy, sortOrder, author, tag } = req.query;
     const options = { sortBy, sortOrder };
@@ -31,6 +32,19 @@ export function postsRoutes(app, io) {
       return res.status(500).end();
     }
   });
+
+  app.post('/api/v1/posts/:id/like', requireAuth, async (req, res) => {
+    try {
+      const post = await getPostById(req.params.id);
+      if (post === null) return res.status(404).end();
+      const updatedPost = await likePost(req.params.id);
+      return res.json(updatedPost);
+    } catch (err) {
+      console.error('error liking post', err);
+      return res.status(500).json({ error: err.message });
+    }
+  });
+
   app.get('/api/v1/posts/:id', async (req, res) => {
     const { id } = req.params;
     try {
@@ -45,14 +59,6 @@ export function postsRoutes(app, io) {
   app.post('/api/v1/posts', requireAuth, async (req, res) => {
     try {
       const post = await createPost(req.auth.sub, req.body);
-      console.log('post created');
-      const message = 'new post!!!!';
-      console.log('Emitting message:', message);
-      io.to('public').emit('chat.message', {
-        message: message,
-        room: 'public',
-        username: 'System',
-      });
       return res.json(post);
     } catch (err) {
       console.error('error creating post', err);

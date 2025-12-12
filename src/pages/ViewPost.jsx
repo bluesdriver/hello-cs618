@@ -3,32 +3,29 @@ import PropTypes from 'prop-types';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Header } from '../components/Header.jsx';
 import { Post } from '../components/Post.jsx';
-import { getPostById } from '../api/posts.js';
+import { getPostById, likePost } from '../api/posts.js';
 import { useEffect, useState } from 'react';
 import { postTrackEvent } from '../api/events.js';
 import { getUserInfo } from '../api/users.js';
 import { PostStats } from '../components/PostStats.jsx';
 
 import { Helmet } from 'react-helmet-async';
-import { updatePost } from '../../backend/src/services/posts.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 
 export function ViewPost({ postId }) {
   const [session, setSession] = useState();
   const [token] = useAuth();
-  const trackEventMutation = useMutation({
-    mutationFn: (action) => postTrackEvent({ postId, action, session }),
-    onSuccess: (data) => setSession(data?.session),
-  });
 
   useEffect(() => {
     let timeout = setTimeout(() => {
-      trackEventMutation.mutate('startView');
+      postTrackEvent({ postId, action: 'startView', session }).then((data) =>
+        setSession(data?.session),
+      );
       timeout = null;
     }, 1000);
     return () => {
       if (timeout) clearTimeout(timeout);
-      else trackEventMutation.mutate('endView');
+      else postTrackEvent({ postId, action: 'endView', session });
     };
   }, []);
 
@@ -37,6 +34,13 @@ export function ViewPost({ postId }) {
     queryFn: () => getPostById(postId),
   });
   const post = postQuery.data;
+
+  const likeMutation = useMutation({
+    mutationFn: () => likePost(token, postId),
+    onSuccess: () => {
+      postQuery.refetch();
+    },
+  });
 
   const userInfoQuery = useQuery({
     queryKey: ['users', post?.author],
@@ -77,19 +81,21 @@ export function ViewPost({ postId }) {
       <br />
       <hr />
       <button
-        onClick={async () => {
+        onClick={() => {
           if (!token) alert('Please log in to like recipes.');
           else {
-            var updatedLikes = post?.likes + 1;
-            await updatePost(post?.author, postId, {
-              likes: updatedLikes,
-            });
-            alert('Liked!');
+            likeMutation.mutate();
           }
         }}
+        disabled={likeMutation.isPending}
       >
-        Like this recipe
+        {likeMutation.isPending ? 'Liking...' : 'Like this recipe'}
       </button>
+      {likeMutation.isError && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          Error: {likeMutation.error?.message}
+        </div>
+      )}
       <br />
       {post ? (
         <div>

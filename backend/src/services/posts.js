@@ -51,10 +51,10 @@ export async function updatePost(
   );
 }
 
-export async function likePost(userId, postId, likes) {
+export async function likePost(postId) {
   return await Post.findOneAndUpdate(
-    { _id: postId, author: userId },
-    { likes: likes + 1 },
+    { _id: postId },
+    { $inc: { likes: 1 } },
     { new: true },
   );
 }

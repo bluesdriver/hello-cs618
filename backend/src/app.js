@@ -11,7 +11,7 @@ import { optionalAuth } from './middleware/jwt.js';
 import { createServer } from 'node:http';
 import { Server } from 'socket.io';
 import { handleSocket } from './socket.js';
-
+console.log('hi');
 const apolloServer = new ApolloServer({
   typeDefs,
   resolvers,
@@ -21,24 +21,25 @@ const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
-apolloServer.start().then(() =>
-  app.use(
-    '/graphql',
-    optionalAuth,
-    expressMiddleware(apolloServer, {
-      context: async ({ req }) => {
-        return { auth: req.auth };
-      },
-    }),
-  ),
-);
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: '*',
   },
 });
-postsRoutes(app, io);
+
+apolloServer.start().then(() =>
+  app.use(
+    '/graphql',
+    optionalAuth,
+    expressMiddleware(apolloServer, {
+      context: async ({ req }) => {
+        return { auth: req.auth, io };
+      },
+    }),
+  ),
+);
+postsRoutes(app);
 userRoutes(app);
 eventRoutes(app);
 

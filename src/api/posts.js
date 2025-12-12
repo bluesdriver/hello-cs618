@@ -1,5 +1,3 @@
-import { useChat } from '../hooks/useChat';
-
 export const getPosts = async (queryParams) => {
   const res = await fetch(
     `${import.meta.env.VITE_BACKEND_URL}/posts?` +
@@ -24,9 +22,19 @@ export const createPost = async (token, post) => {
     },
     body: JSON.stringify(post),
   });
-  const { messages, sendMessage } = useChat();
-  const creationMessage = "Hey there's a new post!!";
-  messages;
-  sendMessage(creationMessage);
+  return await res.json();
+};
+
+export const likePost = async (token, postId) => {
+  const res = await fetch(
+    `${import.meta.env.VITE_BACKEND_URL}/posts/${postId}/like`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    },
+  );
   return await res.json();
 };
