@@ -32,8 +32,13 @@ apolloServer.start().then(() =>
     }),
   ),
 );
-
-postsRoutes(app);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: '*',
+  },
+});
+postsRoutes(app, io);
 userRoutes(app);
 eventRoutes(app);
 
@@ -41,12 +46,5 @@ app.get('/', (req, res) => {
   res.send('Hello from Express!');
 });
 
-const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-  },
-});
 handleSocket(io);
 export { server as app };
-export { io };
