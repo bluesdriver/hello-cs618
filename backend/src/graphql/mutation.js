@@ -43,7 +43,7 @@ export const mutationResolver = {
       if (io) {
         sendSystemMessage(io, {
           room: 'public',
-          message: `New post: "${post.title}"`,
+          message: `New post!! "${post.title}"`,
         });
       }
 
