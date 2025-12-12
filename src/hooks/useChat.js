@@ -30,7 +30,6 @@ export function useChat() {
   }
 
   useEffect(() => {
-    console.log('Socket connected:', socket.connected);
     socket.on('chat.message', receiveMessage);
     return () => socket.off('chat.message', receiveMessage);
   }, []);
