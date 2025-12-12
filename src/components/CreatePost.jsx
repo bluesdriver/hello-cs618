@@ -1,36 +1,36 @@
-import { useState } from 'react'
-import { useAuth } from '../contexts/AuthContext.jsx'
+import { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext.jsx';
 
-import { useMutation as useGraphQLMutation } from '@apollo/client/react/index.js'
+import { useMutation as useGraphQLMutation } from '@apollo/client/react/index.js';
 import {
   CREATE_POST,
   GET_POSTS,
   GET_POSTS_BY_AUTHOR,
-} from '../api/graphql/posts.js'
-import { Link } from 'react-router-dom'
-import slug from 'slug'
+} from '../api/graphql/posts.js';
+import { Link } from 'react-router-dom';
+import slug from 'slug';
 
 export function CreatePost() {
-  const [token] = useAuth()
+  const [token] = useAuth();
 
-  const [title, setTitle] = useState('')
+  const [title, setTitle] = useState('');
 
-  const [contents, setContents] = useState('')
+  const [contents, setContents] = useState('');
 
-  const [imageURL, setImageURL] = useState('')
+  const [imageURL, setImageURL] = useState('');
 
   const [createPost, { loading, data }] = useGraphQLMutation(CREATE_POST, {
     variables: { title, contents, imageURL },
     context: { headers: { Authorization: `Bearer ${token}` } },
     refetchQueries: [GET_POSTS, GET_POSTS_BY_AUTHOR],
-  })
+  });
 
   const handleSubmit = (e) => {
-    e.preventDefault()
-    createPost()
-  }
+    e.preventDefault();
+    createPost();
+  };
 
-  if (!token) return <div>Please log in to create new posts.</div>
+  if (!token) return <div>Please log in to create new posts.</div>;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -82,5 +82,5 @@ export function CreatePost() {
         </>
       ) : null}
     </form>
-  )
+  );
 }
